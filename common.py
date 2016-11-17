@@ -2,6 +2,7 @@ import json
 import os
 import datetime
 import enum
+import re
 
 # Constants
 
@@ -17,6 +18,8 @@ MABEL_GEN_HEADER = """/*
  */
 
 """
+
+LIST_REGEX = re.compile('^list<\S+>$')
 
 def json_from_path(path):
     with open(path) as f:
@@ -39,3 +42,27 @@ def incr_indent(s):
     for part in s.splitlines():
         tmp += '\t' + part + '\n'
     return tmp
+
+def is_list(type_str):
+    return bool(LIST_REGEX.match(type_str))
+
+def get_real_type(type_str, type_map):
+    dep = None
+
+    if type_str in type_map:
+        return (type_map[type_str], dep)
+
+    if is_list(type_str):
+        list_type = type_str[5:-1] # type_str can be, for example, list<int>
+
+        if list_type == 'list':
+            raise Exception('Invalid list type: lispt')
+        elif list_type in type_map:
+            list_type = type_map[list_type]
+        else:
+            dep = list_type
+
+        real_list_type = type_map['list']
+        return (real_list_type + '<' + list_type + '>', dep)
+    
+    return (type_str, type_str)

@@ -1,5 +1,10 @@
 import common
 
+class ClassMember:
+    def __init__(self):
+        self._type = None
+        self._name = None
+
 class Generator:
     def __init__(self):
         self._data = {}
@@ -17,9 +22,12 @@ class Generator:
             self.save_class_at(directory)
         else:
             raise Exception('Invalid Record Type.')
-    
+
     def save_enum_at(self, directory):
         raise NotImplementedError()
 
     def save_class_at(self, directory):
         raise NotImplementedError()
+
+    def get_class_members(self):
+        pass

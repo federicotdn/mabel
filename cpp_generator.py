@@ -13,7 +13,8 @@ TYPE_MAP = {
     'int': 'uint32_t',
     'string': 'std::string',
     'float': 'float',
-    'bool': 'bool'
+    'bool': 'bool',
+    'list': 'std::vector'
 }
 
 class CppGenerator(generator.Generator):
