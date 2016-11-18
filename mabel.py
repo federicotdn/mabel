@@ -6,7 +6,7 @@ import common
 import os
 
 def main():
-    parser = argparse.ArgumentParser(description='Generate C#, C++ and Java classes and/or enums.')
+    parser = argparse.ArgumentParser(description='Generate C#, C++ and Java POD objects or enums.')
     args = parse_args(parser)
 
     langs = [
@@ -43,6 +43,7 @@ def main():
             generator_class = lang['generator']
             generator = generator_class()
             generator.set_values(name, data)
+            generator.set_config(args)
             generator.save_at(lang['dir'])
 
         print('Done.')

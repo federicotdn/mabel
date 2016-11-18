@@ -4,6 +4,15 @@ import datetime
 import enum
 import re
 
+class RecordType:
+    FLOAT = 'float'
+    STRING = 'string'
+    LIST = 'list'
+    INTEGER = 'int'
+    BOOLEAN = 'bool'
+
+RecordTypeList = [vars(RecordType)[v] for v in dir(RecordType) if not v.startswith('__')]
+
 # Constants
 
 ENUM_RECORD = "enum"
@@ -19,7 +28,7 @@ MABEL_GEN_HEADER = """/*
 
 """
 
-LIST_REGEX = re.compile('^list<\S+>$')
+LIST_REGEX = re.compile('^' + RecordType.LIST + '<\S+>$')
 
 def json_from_path(path):
     with open(path) as f:
@@ -46,23 +55,23 @@ def incr_indent(s):
 def is_list(type_str):
     return bool(LIST_REGEX.match(type_str))
 
-def get_real_type(type_str, type_map):
-    dep = None
+def get_list_type(type_str):
+    if not is_list(type_str):
+        raise Exception('Type is not a list.')
 
-    if type_str in type_map:
-        return (type_map[type_str], dep)
+    subtype = type_str[5:-1]
+    if is_list(subtype):
+        raise Exception('Nested lists are not supported.')
+
+    return subtype
+
+def get_real_type(type_str, type_map):
+    if type_str in RecordTypeList:
+        return type_map[type_str]
 
     if is_list(type_str):
-        list_type = type_str[5:-1] # type_str can be, for example, list<int>
+        subtype = get_list_type(type_str)
+        list_str = type_map[RecordType.LIST]
+        return list_str + '<' + get_real_type(subtype, type_map) + '>'
 
-        if list_type == 'list':
-            raise Exception('Invalid list type: lispt')
-        elif list_type in type_map:
-            list_type = type_map[list_type]
-        else:
-            dep = list_type
-
-        real_list_type = type_map['list']
-        return (real_list_type + '<' + list_type + '>', dep)
-    
-    return (type_str, type_str)
+    return type_str
