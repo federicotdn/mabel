@@ -1,4 +1,5 @@
-import generator
+from . import generator
+from . import common
 
 class CsGenerator(generator.Generator):
     def save_enum_at(self, directory):

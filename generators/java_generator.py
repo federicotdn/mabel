@@ -1,5 +1,5 @@
-import generator
-import common
+from . import generator
+from . import common
 
 ENUM_TEMPLATE = """public enum {name} {{
 {values}}}

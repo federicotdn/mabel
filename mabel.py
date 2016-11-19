@@ -1,9 +1,7 @@
 import argparse
-import cpp_generator
-import cs_generator
-import java_generator
-import common
+import generators
 import os
+import json
 
 def main():
     parser = argparse.ArgumentParser(description='Generate C#, C++ and Java POD objects or enums.')
@@ -13,17 +11,17 @@ def main():
         {
             'name': 'C++',
             'dir': args.cpp_path,
-            'generator': cpp_generator.CppGenerator
+            'generator': generators.CppGenerator
         },
         {
             'name': 'C#',
             'dir': args.cs_path,
-            'generator': cs_generator.CsGenerator
+            'generator': generators.CsGenerator
         },
         {
             'name': 'Java',
             'dir': args.java_path,
-            'generator': java_generator.JavaGenerator
+            'generator': generators.JavaGenerator
         },
     ]
 
@@ -32,7 +30,7 @@ def main():
             continue
 
         create_dir(lang['dir'])
-        
+
         print('Generating ' + lang['name'] + ' files...')
         for template in args.files:
             data = parse_template(template)
@@ -53,7 +51,8 @@ def create_dir(directory):
         os.makedirs(directory)
         
 def parse_template(path):
-    return common.json_from_path(path)
+    with open(path) as f:
+        return json.load(f)
 
 def parse_args(parser):
     parser.add_argument('files', 

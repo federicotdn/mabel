@@ -1,7 +1,5 @@
-import json
 import os
 import datetime
-import enum
 import re
 
 class RecordType:
@@ -29,10 +27,6 @@ MABEL_GEN_HEADER = """/*
 """
 
 LIST_REGEX = re.compile('^' + RecordType.LIST + '<\S+>$')
-
-def json_from_path(path):
-    with open(path) as f:
-        return json.load(f)
 
 def open_file_path(directory, filename):
     path = os.path.join(directory, filename)
