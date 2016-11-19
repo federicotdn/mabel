@@ -4,6 +4,8 @@ import os
 import json
 
 def main():
+    print()
+
     parser = argparse.ArgumentParser(description='Generate C#, C++ and Java POD objects or enums.')
     args = parse_args(parser)
 
@@ -44,7 +46,7 @@ def main():
             generator.set_config(args)
             generator.save_at(lang['dir'])
 
-        print('Done.')
+        print('Done.\n')
 
 def create_dir(directory):
     if not os.path.exists(directory):

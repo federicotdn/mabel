@@ -1,0 +1,32 @@
+{
+    "type": "class",
+    "namespace": "models",
+    "package": "main.models",
+    "parent": "Entity",
+    "members": [
+        {
+            "name": "age",
+            "type": "int"
+        },
+        {
+            "name": "height",
+            "type": "float"
+        },
+        {
+            "name": "friends",
+            "type": "list<Entity>"
+        },
+        {
+            "name": "owner",
+            "type": "string"
+        },
+        {
+            "name": "happy",
+            "type": "bool"
+        },
+        {
+            "name": "color",
+            "type": "Color"
+        }
+    ]
+}

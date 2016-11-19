@@ -1,5 +1,5 @@
 # mabel
-Use `.json` files to create POD objects, or enums, for C#, C++ and Java.
+A simple Python 3 tool that generates C#, C++ and Java POD objects from JSON files.
 
 ## Usage
 ```
@@ -20,87 +20,7 @@ optional arguments:
 ```
 
 ## Examples
-Creating an enum:
-
-`Color.json`
-```json
-{
-    "type": "enum",
-    "namespace": "test",
-    "values": ["RED", "BLUE", "GREEN", "YELLOW"]
-}
-```
-
-Generated C++ header file:
-
-`Color.h`
-```C++
-#ifndef TEST_TEST_H
-#define TEST_TEST_H
-
-namespace test {
-	enum class Color {
-		RED,
-		BLUE,
-		GREEN,
-		YELLOW
-	};
-}
-
-#endif //TEST_TEST_H
-```
-
-Creating a class/struct:
-
-`Animal.json`
-```json
-{
-    "type": "class",
-    "namespace": "test",
-    "parent": "Entity",
-    "members": [
-        {
-            "name": "age",
-            "type": "int"
-        },
-        {
-            "name": "height",
-            "type": "float"
-        },
-        {
-            "name": "friends",
-            "type": "list<Animal>"
-        },
-        {
-            "name": "owner",
-            "type": "string"
-        }
-    ]
-}
-```
-
-Generated C++ header file:
-
-`Animal.h`
-```C++
-#ifndef TEST_ANIMAL_H
-#define TEST_ANIMAL_H
-
-#include <vector>
-#include <string>
-#include "Entity.h"
-
-namespace test {
-	struct Animal : public Entity {
-		uint32_t m_age;
-		float m_height;
-		std::vector<Animal> m_friends;
-		std::string m_owner;
-	};
-}
-
-#endif //TEST_ANIMAL_H
-```
+See the `examples` directory for examples.
 
 ## License
 GPLv3 License.

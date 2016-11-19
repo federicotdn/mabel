@@ -1,0 +1,6 @@
+{
+    "type": "enum",
+    "namespace": "models",
+    "package": "main.models",
+    "values": ["RED", "GREEN", "BLUE"]
+}

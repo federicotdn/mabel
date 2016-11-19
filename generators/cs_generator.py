@@ -20,7 +20,7 @@ TYPE_MAP = {
 class CsGenerator(generator.Generator):
     def save_enum_at(self, directory):
         cs = common.create_base_file(directory, self._name, '.cs')
-        namespace = self._data.get('namespace')
+        namespace = self._data.get('namespace').title()
 
         values_str = ''
         for i, val in enumerate(self._data['values']):
@@ -41,7 +41,7 @@ class CsGenerator(generator.Generator):
 
     def save_class_at(self, directory):
         cs = common.create_base_file(directory, self._name, '.cs')
-        namespace = self._data.get('namespace')
+        namespace = self._data.get('namespace').title()
 
         members_str = ''
         for i, member in enumerate(self._data['members']):
