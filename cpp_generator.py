@@ -84,7 +84,7 @@ class CppGenerator(generator.Generator):
         if parent:
             includes_str += '#include "' + parent + '.h"\n'
         for used_custom in self._used_custom:
-            if used_custom != self._name:
+            if used_custom != self._name and used_custom != parent:
                 includes_str += '#include "' + used_custom + '.h"\n'
         if includes_str:
             includes_str += '\n'

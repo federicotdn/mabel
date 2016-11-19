@@ -32,7 +32,7 @@ def main():
             continue
 
         create_dir(lang['dir'])
-
+        
         print('Generating ' + lang['name'] + ' files...')
         for template in args.files:
             data = parse_template(template)
