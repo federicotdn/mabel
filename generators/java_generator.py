@@ -41,7 +41,7 @@ class JavaGenerator(generator.Generator):
         java.close()
 
     def save_class_at(self, directory):
-        hpp = common.create_base_file(directory, self._name, '.java')
+        java = common.create_base_file(directory, self._name, '.java')
         package = self._data.get('package')
 
         members_str = ''
@@ -74,8 +74,8 @@ class JavaGenerator(generator.Generator):
         if imports_str:
             imports_str += '\n'
 
-        self.write_file_start(hpp, package)
-        hpp.write(imports_str)
-        hpp.write(class_str)
+        self.write_file_start(java, package)
+        java.write(imports_str)
+        java.write(class_str)
         
-        hpp.close()
+        java.close()
