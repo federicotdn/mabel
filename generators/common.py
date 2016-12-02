@@ -21,10 +21,13 @@ MABEL_GEN_HEADER = """/*
  * 
  * Created using github.com/federicotdn/mabel, version: {version}.
  * Creation date: {date}
- * Base: {base}
+ * Base: {base}{comment_txt}
  */
 
 """
+MABEL_COMMENT = """
+ *
+ * {comment}"""
 
 LIST_REGEX = re.compile('^' + RecordType.LIST + '<\S+>$')
 
@@ -32,11 +35,13 @@ def open_file_path(directory, filename):
     path = os.path.join(directory, filename)
     return open(path, 'w+')
 
-def create_base_file(directory, base, extension):
+def create_base_file(directory, base, extension, comment=''):
     f = open_file_path(directory, base + extension)
+    comment_txt = '' if not comment else MABEL_COMMENT.format(comment=comment)
     header = MABEL_GEN_HEADER.format(date=str(datetime.datetime.now()),
-                                    base=base,
-                                    version=MABEL_VERSION)
+                                    base=base + '.json',
+                                    version=MABEL_VERSION,
+                                    comment_txt=comment_txt)
     f.write(header)
     return f
 

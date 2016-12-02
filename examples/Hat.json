@@ -1,0 +1,18 @@
+{
+    "type": "class",
+    "namespace": "models",
+    "package": "main.models.apparel",
+    "implements": "Serializable",
+    "subdir": "apparel",
+    "members": [
+        {
+            "name": "radius",
+            "type": "float",
+            "default": "1.0f"
+        },
+        {
+            "name": "color",
+            "type": "Color"
+        }
+    ]
+}

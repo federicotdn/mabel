@@ -3,6 +3,7 @@
     "namespace": "models",
     "package": "main.models",
     "parent": "Entity",
+    "comment": "Represents an animal with a hat.",
     "members": [
         {
             "name": "age",
@@ -18,15 +19,21 @@
         },
         {
             "name": "owner",
-            "type": "string"
+            "type": "string",
+            "default": "\"John\""
         },
         {
             "name": "happy",
-            "type": "bool"
+            "type": "bool",
+            "default": "true"
         },
         {
             "name": "color",
             "type": "Color"
+        },
+        {
+            "name": "hat",
+            "type": "Hat"
         }
     ]
 }

@@ -7,13 +7,15 @@ class Generator:
         self._used_builtins = None
         self._used_custom = None
         self._config = None
+        self._all_templates = []
 
     def set_values(self, name, data):
         self._name = name
         self._data = data
 
-    def set_config(self, config):
+    def set_config(self, config, all_templates):
         self._config = config
+        self._all_templates = all_templates
 
     def save_at(self, directory):
         t = self._data['type']

@@ -1,7 +1,10 @@
+#! /usr/bin/env python3
+
 import argparse
 import generators
 import os
 import json
+import template
 
 def main():
     print()
@@ -26,6 +29,12 @@ def main():
             'generator': generators.JavaGenerator
         },
     ]
+    
+    templates = {}
+    for f in args.files:
+        data = parse_template(f)
+        name = os.path.splitext(os.path.basename(f))[0] # Removes '.json' from file
+        templates[name] = template.Template(name, data)
 
     for lang in langs:
         if not lang['dir']:
@@ -34,17 +43,18 @@ def main():
         create_dir(lang['dir'])
 
         print('Generating ' + lang['name'] + ' files...')
-        for template in args.files:
-            data = parse_template(template)
-            name = os.path.splitext(os.path.basename(template))[0]
-
-            print('-> Processing: ' + name)
+        for t in templates.values():
+            print('-> Processing: ' + t.name)
             
             generator_class = lang['generator']
             generator = generator_class()
-            generator.set_values(name, data)
-            generator.set_config(args)
-            generator.save_at(lang['dir'])
+            generator.set_values(t.name, t.data)
+            generator.set_config(args, templates)
+            path = lang['dir']
+            if 'subdir' in t.data:
+                path = os.path.join(path, t.data['subdir'])
+                create_dir(path)
+            generator.save_at(path)
 
         print('Done.\n')
 

@@ -34,7 +34,7 @@ class CppGenerator(generator.Generator):
         f.write('\n#endif //' + ig_name)
 
     def save_enum_at(self, directory):
-        hpp = common.create_base_file(directory, self._name, '.h')
+        hpp = common.create_base_file(directory, self._name, '.h', self._data.get('comment'))
         namespace = self._data.get('namespace')
 
         values_str = ''
@@ -56,14 +56,17 @@ class CppGenerator(generator.Generator):
         hpp.close()
 
     def save_class_at(self, directory):
-        hpp = common.create_base_file(directory, self._name, '.h')
+        hpp = common.create_base_file(directory, self._name, '.h', self._data.get('comment'))
         namespace = self._data.get('namespace')
 
         members_str = ''
         for i, member in enumerate(self._data['members']):
             type_str = common.get_real_type(member['type'], TYPE_MAP)
 
-            m = type_str + ' m_' + member['name'] + ';'
+            m = type_str + ' m_' + member['name']
+            if 'default' in member:
+                m += ' = ' + member['default']
+            m += ';'
             if i != len(self._data['members']) - 1:
                 m += '\n'
             

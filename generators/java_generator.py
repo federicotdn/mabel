@@ -5,9 +5,11 @@ ENUM_TEMPLATE = """public enum {name} {{
 {values}}}
 """ 
 
-CLASS_TEMPLATE = """public class {name}{parent} {{
+CLASS_TEMPLATE = """public class {name}{parent}{extends} {{
 {members}}}
 """
+
+IMPORT_TEMPLATE="""import {path};\n"""
 
 TYPE_MAP = {
     common.RecordType.INTEGER: 'int',
@@ -22,7 +24,7 @@ class JavaGenerator(generator.Generator):
         f.write('package ' + package + ';\n\n')
 
     def save_enum_at(self, directory):
-        java = common.create_base_file(directory, self._name, '.java')
+        java = common.create_base_file(directory, self._name, '.java', self._data.get('comment'))
         package = self._data.get('package')
 
         values_str = ''
@@ -41,14 +43,17 @@ class JavaGenerator(generator.Generator):
         java.close()
 
     def save_class_at(self, directory):
-        java = common.create_base_file(directory, self._name, '.java')
+        java = common.create_base_file(directory, self._name, '.java', self._data.get('comment'))
         package = self._data.get('package')
 
         members_str = ''
         for i, member in enumerate(self._data['members']):
             type_str = common.get_real_type(member['type'], TYPE_MAP)
 
-            m = 'public ' + type_str + ' ' + member['name'] + ';'
+            m = 'public ' + type_str + ' ' + member['name']
+            if 'default' in member:
+                m += ' = ' + member['default']
+            m += ';'
             if i != len(self._data['members']) - 1:
                 m += '\n'
             
@@ -58,19 +63,30 @@ class JavaGenerator(generator.Generator):
 
         parent = self._data.get('parent')
         parent_str = '' if not parent else ' extends ' + parent
-        class_str = CLASS_TEMPLATE.format(name=self._name, members=members_str, parent=parent_str)
+        
+        interface = self._data.get('implements')
+        interface_str = '' if not interface else ' implements ' + interface
+        
+        class_str = CLASS_TEMPLATE.format(name=self._name, members=members_str, parent=parent_str, extends=interface_str)
 
         if 'Object' in self._used_custom:
             self._used_custom.remove('Object')
 
         imports_str = ''
-        if common.RecordType.LIST in self._used_builtins:
-            imports_str += 'import java.util.List;\n'
-        if parent and parent != 'Object':
-            imports_str += 'import ' + package + '.' + parent + ';\n'
-        for used_custom in self._used_custom:
-            if used_custom != self._name and used_custom != parent:
-                imports_str += 'import ' + package + '.' + used_custom + ';\n'
+        
+        used_types = self._used_custom.union(self._used_builtins)
+        if parent:
+            used_types.add(parent)
+        if interface:
+            used_types.add(interface)
+        if self._name in used_types:
+            used_types.remove(self._name)
+        
+        for used_type in used_types:
+            import_str = self.import_for_type(used_type, package)
+            if import_str:
+                imports_str += import_str
+        
         if imports_str:
             imports_str += '\n'
 
@@ -79,3 +95,22 @@ class JavaGenerator(generator.Generator):
         java.write(class_str)
         
         java.close()
+    
+    def import_for_type(self, type_str, my_package):
+        path = self.package_for_type(type_str)
+        if not path or path == my_package:
+            return ''
+        return IMPORT_TEMPLATE.format(path=path + '.' + (type_str if type_str != common.RecordType.LIST else TYPE_MAP[type_str]))
+    
+    def package_for_type(self, type_str):
+        if type_str == 'Object':
+            return None
+        elif type_str == common.RecordType.LIST:
+            return 'java.util'
+        elif type_str == 'Serializable':
+            return 'java.io'
+        elif type_str in self._all_templates:
+            return self._all_templates[type_str].data['package']
+        return None
+        
+        
