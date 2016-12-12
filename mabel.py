@@ -32,9 +32,12 @@ def main():
     
     templates = {}
     for f in args.files:
-        data = parse_template(f)
-        name = os.path.splitext(os.path.basename(f))[0] # Removes '.json' from file
-        templates[name] = template.Template(name, data)
+        try:
+            data = parse_template(f)
+            name = os.path.splitext(os.path.basename(f))[0] # Removes '.json' from file
+            templates[name] = template.Template(name, data)
+        except:
+            print('-> Error parsing json file: ' + f)
 
     for lang in langs:
         if not lang['dir']:
