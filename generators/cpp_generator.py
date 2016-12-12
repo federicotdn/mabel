@@ -3,6 +3,8 @@ from . import common
 
 ENUM_TEMPLATE = """enum class {name} {{
 {values}}};
+
+static const size_t {name}Count = {count};
 """ 
 
 CLASS_TEMPLATE = """struct {name}{parent} {{
@@ -45,7 +47,7 @@ class CppGenerator(generator.Generator):
 
         values_str = common.incr_indent(values_str)
 
-        enum_str = ENUM_TEMPLATE.format(name=self._name, values=values_str)
+        enum_str = ENUM_TEMPLATE.format(name=self._name, values=values_str, count=len(self._data['values']))
         enum_str = common.incr_indent(enum_str)
 
         self.write_file_start(hpp, namespace)
