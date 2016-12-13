@@ -4,7 +4,7 @@ A simple Python 3 tool that generates C#, C++ and Java POD objects from JSON fil
 ## Usage
 ```
 usage: mabel.py [-h] [--cpp-path <path>] [--cs-path <path>]
-                [--java-path <path>]
+                [--java-path <path>] [--force-gen]
                 <JSON file> [<JSON file> ...]
 
 Generate C#, C++ and Java POD objects or enums.
@@ -17,6 +17,8 @@ optional arguments:
   --cpp-path <path>   Path used to store generated C++ files.
   --cs-path <path>    Path used to store generated C# files.
   --java-path <path>  Path used to store generated Java files.
+  --force-gen         Force source file generation, even if templates have not
+                      been modified.
 ```
 
 ## Examples
