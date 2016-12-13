@@ -20,11 +20,15 @@ TYPE_MAP = {
 }
 
 class JavaGenerator(generator.Generator):
+    def check_unchanged(self, directory):
+        filename = self._name + '.java'
+        return common.check_cstyle_hash_comment(directory, filename, self._template_hash)
+    
     def write_file_start(self, f, package):
         f.write('package ' + package + ';\n\n')
 
     def save_enum_at(self, directory):
-        java = common.create_base_file(directory, self._name, '.java', self._data.get('comment'))
+        java = common.create_base_file(directory, self._name, '.java', self._data.get('comment'), self._template_hash)
         package = self._data.get('package')
 
         values_str = ''
@@ -43,7 +47,7 @@ class JavaGenerator(generator.Generator):
         java.close()
 
     def save_class_at(self, directory):
-        java = common.create_base_file(directory, self._name, '.java', self._data.get('comment'))
+        java = common.create_base_file(directory, self._name, '.java', self._data.get('comment'), self._template_hash)
         package = self._data.get('package')
 
         members_str = ''

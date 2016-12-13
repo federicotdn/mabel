@@ -35,8 +35,12 @@ class CppGenerator(generator.Generator):
         ig_name = self.include_guard_name(namespace)
         f.write('\n#endif //' + ig_name)
 
+    def check_unchanged(self, directory):
+        filename = self._name + '.h'
+        return common.check_cstyle_hash_comment(directory, filename, self._template_hash)
+
     def save_enum_at(self, directory):
-        hpp = common.create_base_file(directory, self._name, '.h', self._data.get('comment'))
+        hpp = common.create_base_file(directory, self._name, '.h', self._data.get('comment'), self._template_hash)
         namespace = self._data.get('namespace')
 
         values_str = ''
@@ -59,7 +63,7 @@ class CppGenerator(generator.Generator):
         hpp.close()
 
     def save_class_at(self, directory):
-        hpp = common.create_base_file(directory, self._name, '.h', self._data.get('comment'))
+        hpp = common.create_base_file(directory, self._name, '.h', self._data.get('comment'), self._template_hash)
         namespace = self._data.get('namespace')
 
         members_str = ''

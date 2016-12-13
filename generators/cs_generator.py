@@ -18,8 +18,12 @@ TYPE_MAP = {
 }
 
 class CsGenerator(generator.Generator):
+    def check_unchanged(self, directory):
+        filename = self._name + '.cs'
+        return common.check_cstyle_hash_comment(directory, filename, self._template_hash)
+    
     def save_enum_at(self, directory):
-        cs = common.create_base_file(directory, self._name, '.cs', self._data.get('comment'))
+        cs = common.create_base_file(directory, self._name, '.cs', self._data.get('comment'), self._template_hash)
         namespace = self._data.get('namespace').title()
 
         values_str = ''
@@ -40,7 +44,7 @@ class CsGenerator(generator.Generator):
         cs.close()
 
     def save_class_at(self, directory):
-        cs = common.create_base_file(directory, self._name, '.cs', self._data.get('comment'))
+        cs = common.create_base_file(directory, self._name, '.cs', self._data.get('comment'), self._template_hash)
         namespace = self._data.get('namespace').title()
 
         members_str = ''
