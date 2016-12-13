@@ -20,7 +20,7 @@ class Generator:
         self._all_templates = all_templates
 
     def save_at(self, directory):
-        if self.check_unchanged(directory):
+        if self.check_unchanged(directory) and not self._config.force_gen:
             return False
         
         t = self._data['type']

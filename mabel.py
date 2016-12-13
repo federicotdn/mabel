@@ -8,8 +8,6 @@ import template
 import hashlib
 
 def main():
-    print()
-
     parser = argparse.ArgumentParser(description='Generate C#, C++ and Java POD objects or enums.')
     args = parse_args(parser)
 
@@ -40,6 +38,9 @@ def main():
         except Exception as e:
             print('-> Error parsing json file ' + f + ': ' + str(e))
 
+    skipped = 0
+    created = 0
+
     for lang in langs:
         if not lang['dir']:
             continue
@@ -61,9 +62,16 @@ def main():
             
             written = generator.save_at(path)
             if not written:
+                skipped += 1
                 print('---> Skipped file (template unchanged).')
+            else:
+                created += 1
 
-        print('Done.\n')
+        print('Done ({lang}).\n'.format(lang=lang['name']))
+    
+    print('Processed {n} JSON template files.'.format(n=len(args.files)))
+    print('Newly written source files: ', str(created))
+    print('Skipped source files: ', str(skipped))
 
 def create_dir(directory):
     if not os.path.exists(directory):
@@ -98,6 +106,10 @@ def parse_args(parser):
                         type=str,
                         default=None,
                         help='Path used to store generated Java files.')
+                        
+    parser.add_argument('--force-gen',
+                        action='store_true',
+                        help='Force source file generation, even if templates have not been modified.')                     
 
     return parser.parse_args()
 
