@@ -51,6 +51,7 @@ class CppGenerator(generator.Generator):
         enum_str = common.incr_indent(enum_str)
 
         self.write_file_start(hpp, namespace)
+        hpp.write('#include <cstddef>\n\n') # include definition of size_t
         hpp.write('namespace ' + namespace + ' {\n')
         hpp.write(enum_str)
         self.write_file_end(hpp, namespace)
