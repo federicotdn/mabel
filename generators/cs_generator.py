@@ -1,11 +1,11 @@
 from . import generator
 from . import common
 
-ENUM_TEMPLATE = """enum {name} {{
+ENUM_TEMPLATE = """public enum {name} {{
 {values}}}
 """ 
 
-CLASS_TEMPLATE = """class {name}{parent} {{
+CLASS_TEMPLATE = """public class {name}{parent} {{
 {members}}}
 """
 
