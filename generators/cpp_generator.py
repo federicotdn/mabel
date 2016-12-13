@@ -87,6 +87,8 @@ class CppGenerator(generator.Generator):
             includes_str += '#include <vector>\n'
         if common.RecordType.STRING in self._used_builtins:
             includes_str += '#include <string>\n'
+        if common.RecordType.INTEGER in self._used_builtins:
+            includes_str += '#include <cstdint>\n'
         if parent:
             includes_str += '#include "' + parent + '.h"\n'
         for used_custom in self._used_custom:
