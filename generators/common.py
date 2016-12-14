@@ -57,6 +57,12 @@ def incr_indent(s):
 def is_list(type_str):
     return bool(LIST_REGEX.match(type_str))
 
+def is_class(type_str, templates):
+    return type_str in templates and templates[type_str].data['type'] == CLASS_RECORD
+
+def is_enum(type_str, templates):
+    return type_str in templates and templates[type_str].data['type'] == ENUM_RECORD
+
 def get_list_type(type_str):
     if not is_list(type_str):
         raise Exception('Type is not a list.')

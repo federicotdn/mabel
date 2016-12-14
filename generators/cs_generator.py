@@ -9,13 +9,16 @@ CLASS_TEMPLATE = """public class {name}{parent} {{
 {members}{serialization}}}
 """
 
-SERIALIZATION_TEMPLATE = """
-public void SaveBinary(BitBuffer buffer) {{
-{save}}}
+SET_TEMPLATE = """
+public void Set({type} other) {{
+{set}}}"""
 
-public void LoadBinary(BitBuffer buffer) {{
-{load}}}
-"""
+SET_LIST_TEMPLATE = """foreach ({subtype} otherItem in other.{member}) {{
+{submember_set}}}"""
+
+SAVE_TEMPLATE = """
+public void SaveBinary(BitBuffer buffer) {{
+{save}}}"""
 
 SAVE_INTEGER_TEMPLATE = """buffer.PutInt({member});"""
 SAVE_STRING_TEMPLATE = """buffer.PutString({member});"""
@@ -26,6 +29,10 @@ foreach ({subtype} item in {member}) {{
 {submember_save}}}"""
 SAVE_ENUM_TEMPLATE = """buffer.PutEnum({member});"""
 SAVE_CLASS_TEMPLATE = """{member}.SaveBinary(buffer);"""
+
+LOAD_TEMPLATE = """
+public void LoadBinary(BitBuffer buffer) {{
+{load}}}"""
 
 LOAD_INTEGER_TEMPLATE = """{member} = buffer.GetInt();"""
 LOAD_STRING_TEMPLATE = """{member} = buffer.GetString();"""
@@ -80,7 +87,9 @@ class CsGenerator(generator.Generator):
             type_str = common.get_real_type(member['type'], TYPE_MAP)
 
             m = 'public ' + type_str + ' ' + member['name']
-            if 'default' in member:
+            if common.is_list(member['type']) or common.is_class(member['type'], self._all_templates):
+                m += ' = new ' + type_str + '()'
+            elif 'default' in member:
                 m += ' = ' + member['default']
             m += ';'
             if i != len(self._data['members']) - 1:
@@ -113,24 +122,50 @@ class CsGenerator(generator.Generator):
         cs.close()
 
     def get_serialization_str(self):
+        serialization_str = ''
+        set_str = ''
         save_str = ''
         load_str = ''
+        
         for i, member in enumerate(self._data['members']):
+            set_str += self.get_member_set_str(member['name'], 'other.' + member['name'], member['type'])
             save_str += self.get_member_save_str(member['name'], member['type'])
             load_str += self.get_member_load_str(member['name'], member['type'])
             
             if i != len(self._data['members']) - 1:
+                set_str += '\n'
                 save_str += '\n'
                 load_str += '\n'
         
+        set_str = common.incr_indent(set_str)
         save_str = common.incr_indent(save_str)
         load_str = common.incr_indent(load_str)
         
-        serialization_str = SERIALIZATION_TEMPLATE.format(save=save_str, load=load_str)
+        serialization_str += SET_TEMPLATE.format(type=self._name, set=set_str) + '\n'
+        serialization_str += SAVE_TEMPLATE.format(save=save_str) + '\n'
+        serialization_str += LOAD_TEMPLATE.format(load=load_str)
         serialization_str = common.incr_indent(serialization_str)
         
         return serialization_str
+
+    def get_member_set_str(self, name, source_name, type):
+        set_str = ''
         
+        if common.is_list(type):
+            list_type = common.get_list_type(type)
+            real_list_type = common.get_real_type(list_type, TYPE_MAP)
+            submember_set = real_list_type + ' item = new ' + real_list_type + '();\n'
+            submember_set += self.get_member_set_str('item', 'otherItem', list_type) + '\n'
+            submember_set += name + '.Add(item);'
+            submember_set = common.incr_indent(submember_set)
+            set_str += SET_LIST_TEMPLATE.format(member=name, subtype=real_list_type, submember_set=submember_set)
+        elif common.is_class(type, self._all_templates):
+            set_str += name + '.Set(' + source_name + ');'
+        else:
+            set_str += name + " = " + source_name + ';'
+
+        return set_str
+
     def get_member_save_str(self, name, type):
         save_str = ''
         
