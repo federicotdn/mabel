@@ -56,7 +56,10 @@ def main():
             generator.set_values(t.name, t.data, t.template_hash)
             generator.set_config(args, templates)
             path = lang['dir']
-            if 'subdir' in t.data:
+            if lang['name'] == 'Java':
+                path += t.data['package'].replace('.', '/')
+                create_dir(path)
+            elif 'subdir' in t.data:
                 path = os.path.join(path, t.data['subdir'])
                 create_dir(path)
             
