@@ -133,9 +133,13 @@ class CppGenerator(generator.Generator):
             includes_str += '#include <cstdint>\n'
         if parent:
             includes_str += '#include "' + parent + '.h"\n'
+        used_custom_list = []
         for used_custom in self._used_custom:
             if used_custom != self._name and used_custom != parent:
-                includes_str += '#include "' + used_custom + '.h"\n'
+                used_custom_list.append('#include "' + used_custom + '.h"')
+        if len(used_custom_list) > 0:
+            used_custom_list.sort()
+            includes_str += "\n".join(used_custom_list) + '\n'
         if generate_serialization:
             includes_str += '#include "BitBuffer.h"\n'
         if includes_str:
